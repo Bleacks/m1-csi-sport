@@ -379,10 +379,8 @@ create table RESERVE (
    ID_SEANCE            INT4                 not null,
    IDUSERENREGISTRE     INT4                 not null,
    ID_ADHERENT          INT4                 not null,
-   IDRESERVE            SERIAL,
-   DATERESERVATION      DATE                 null,
-   DEMANDECOACH         BOOL                 null,
-   STATUT               TEXT                 null,
+   DATERESERVATION      DATE                 not null DEFAULT current_date,
+   STATUT               TEXT                 not null DEFAULT 'prise en compte',
    ID_PARRAIN           INT4                 null,
    constraint PK_RESERVE primary key (ID_SEANCE, IDUSERENREGISTRE, ID_ADHERENT)
 );
@@ -515,6 +513,7 @@ create table S_INSCRIT (
    ID_SEANCE            INT4                 not null,
    IDUSERENREGISTRE     INT4                 not null,
    ID_ADHERENT          INT4                 not null,
+   DEMANDECOACH         BOOL                 null,
    constraint PK_S_INSCRIT primary key (ID_SEANCE, IDUSERENREGISTRE, ID_ADHERENT)
 );
 
