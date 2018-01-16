@@ -2,10 +2,12 @@
 # @Author: Maxime Dolet <Bleacks>
 # @Date:   2018-01-03T21:38:13+01:00
 # @Email:  maximed.contact@gmail.com
-# @Last modified by:   Bleacks
-# @Last modified time: 2018-01-04T01:11:44+01:00
+# @Last modified by:   bleacks
+# @Last modified time: 2018-01-15T17:16:58+01:00
 
-Namespace Src;
+Namespace Sources;
+
+Use Sources\Views\{ Welcome, Connect, Subscribe };
 
 /**
 * Controller of the website
@@ -31,7 +33,7 @@ class Controller
      * Used to retrieve the unique instance of Controller (Singleton)
      * @return Controller Singleton
      */
-    public function getController()
+    public static function getController()
     {
         if (is_null(self::$instance))
             self::$instance = new Controller();
@@ -45,7 +47,29 @@ class Controller
     public function welcomePage()
     {
         $view = new Welcome();
-        $page = $view->getPage($content);
+        $page = $view->getPage();
+        return $page;
+    }
+
+	/**
+     * Creates and return the entire connect page
+     * @return string HTML code
+     */
+    public function connectPage()
+    {
+        $view = new Connect();
+        $page = $view->getPage();
+        return $page;
+    }
+
+	/**
+     * Creates and return the entire subscribe page
+     * @return string HTML code
+     */
+    public function subscribePage($method)
+    {
+        $view = new Subscribe();
+        $page = $view->getPage($method);
         return $page;
     }
 }

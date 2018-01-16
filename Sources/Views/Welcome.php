@@ -3,9 +3,9 @@
 # @Date:   2018-01-03T23:13:43+01:00
 # @Email:  maximed.contact@gmail.com
 # @Last modified by:   Bleacks
-# @Last modified time: 2018-01-04T01:26:12+01:00
+# @Last modified time: 2018-01-04T21:22:49+01:00
 
-Namespace Src;
+Namespace Sources\Views;
 
 /**
  * Wraps all actions related to the Welcome page

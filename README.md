@@ -35,7 +35,7 @@ Nous devons développer une application capable de gérer une salle de sport (in
 
 * [Php](http://php.net/) - Utilisé pour les tâches back-end
 * [Slim](https://www.slimframework.com/) - Utilisé pour gérer la redirection des requêtes HTTP
-* [Idorm](https://github.com/j4mie/idiorm) - L'utilitaire de connexion à la base de données
+* [Idiorm](https://github.com/j4mie/idiorm) - L'utilitaire de connexion à la base de données
 * [Materialize](http://materializecss.com/) - Framework front-end
 
 ## Installation de l'environnement
@@ -100,12 +100,12 @@ platformio-ide-terminal
 - Chaque version sur le dépôt doit être testée avant envoi. De sorte que la version en ligne soit toujours fonctionnelle. Utilisez les branches si besoin.
 
 ### Normalisation
-- Les classes suivent les normes PSR (ex: une classe à pour nom son nom de fichier)
+- Les classes suivent les normes PSR (ex: le namespace d'une classe correspond au chemin de son fichier)
 - La documentation doit toujours être à jour sur le dépôt. Des commentaires peuvent être ajoutés dans les parties nécessitant des explications, mais ceux-ci ne doivent en aucun cas remplacer la documentation, mais la compéter.
 
 ### Contributeurs
 
 * **Maxime Dolet** - *Conception, développement et documentation* - [Bleacks](https://github.com/Bleacks)
-* **Nicolas Calley** - *Analyse et développement*
-* **Benoît Cante** - *Analyse et BDD*
+* **Nicolas Calley** - *Analyse et développement* [NCalley](https://github.com/NCalley)
+* **Benoît Cante** - *Analyse et BDD* [BNoir](https://github.com/BNoir)
 * **Abdoulaye Dialo** - *Analyse*

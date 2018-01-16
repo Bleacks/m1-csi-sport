@@ -3,9 +3,9 @@
 # @Date:   2018-01-03T22:44:53+01:00
 # @Email:  maximed.contact@gmail.com
 # @Last modified by:   Bleacks
-# @Last modified time: 2018-01-04T01:26:20+01:00
+# @Last modified time: 2018-01-04T21:24:50+01:00
 
-Namespace Src;
+Namespace Sources\Views;
 
 /*
 Template class for all Views (pages)

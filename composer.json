@@ -1,6 +1,6 @@
 {
     "autoload": {
-      "psr-4": { "Src\\": "src/" }
+      "psr-4": { "Sources\\": "Sources/" }
     },
     "require": {
         "slim/slim": "^3.0",
