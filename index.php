@@ -3,7 +3,7 @@
 # @Date:   2018-01-03T21:26:03+01:00
 # @Email:  maximed.contact@gmail.com
 # @Last modified by:   bleacks
-# @Last modified time: 2018-01-16T16:46:24+01:00
+# @Last modified time: 2018-01-16T21:08:34+01:00
 
 /* Memento HTTP
 
@@ -39,25 +39,40 @@ Use Sources\DBConnectors\MainDBConnector;
 # Global constants declaration
 ######
 
-# TODO: Revoir le fonctionnement pour réunir ACCESSIBLE_PAGES de View avec ces array
-/** Lists all accessible pages for visitor users */
-const PUBLIC_URI_ARRAY = array(
-	'Connect',
-	'Subscribe',
-	'Activity',
-	'Kill',
-	'Test',
-	'/'
+/** Pages listed on website and accessible
+* Grouped by role
+* Sorted by acces right
+* Contains URI and associated name in Nav Bar */
+const ACCESSIBLE_PAGES = array(
+	'Visitor'	=> array(
+		0 => array('Connect', 'Connexion'),
+		1 => array('Subscribe', 'Inscription'),
+		2 => array('Activity', 'Activité des salles')
+	),
+	'Unpayed'	=> array(
+		array('Disconnect', 'Déconnexion')
+	),
+	'User'		=> array(
+		array('Planning', 'Planning'),
+		array('History', 'Historique'),
+		array('Activity', 'Activité'),
+		array('Subscriptions', 'Abonnements'),
+		array('Disconnect', 'Déconnexion')
+	),
+	'Coach'		=> array(
+		array('Requests', 'Requêtes'),
+		array('Activity', 'Activité'),
+		array('Disconnect', 'Déconnexion')
+	),
+    'Employee'	=> array(
+		array('Activity', 'Activité'),
+		array('Disconnect', 'Déconnexion')
+    ),
+    'Admin' 	=> array(
+		array('Activity', 'Activité'),
+		array('Disconnect', 'Déconnexion')
+	)
 );
-
-# TODO: Faire la documentation
-# TODO: Voir avec Benoit pour le niveau des droits (retourne un int pour les fonctions)
-const RIGHTS = array(
-	'Visitor'
-);
-
-/** Lists all accessible pages for authentified users */
-const PRIVATE_URI_ARRAY = array('Disconnect');
 
 /** Method called by the automatic page wrapper __call */
 const GET_METHOD = 'getContent';
@@ -81,45 +96,31 @@ const ERROR_METHOD = 'errorContent';
  * @param  Callable               $next
  * @return ResponseInterface      Status code and page
  */
-function verifyURIAccessibility(ServerRequestInterface $request, $response, $next)
+function verifyURIAccessibility(ServerRequestInterface $request, ResponseInterface $response, Callable $next)
 {
-	if (isset($request) && isset($response) && isset($next))
+	$url = $request->getUri()->getPath();
+	$path = $request->getUri()->getBasePath().'/Connect';
+	# FIXME: Ajouter le support pour les URI complexes /*/*
+	$code = 404;
+	$right = 'Visitor';
+
+	if (strpos($url, '/') !== false)
+		$url = explode('/', $url)[1];
+
+	if (isset($_SESSION['right']))
+		$right = $_SESSION['right'];
+
+	if (array_key_exists($right, ACCESSIBLE_PAGES))
 	{
-		$url = $request->getUri()->getPath();
-		# $path = $request->getUri()->getBasePath().'/Connect'; # TODO: Comprendre
-		$path = $request->getUri()->getBasePath().'/Connect';
-		$code = 404;
-
-		if (strpos($url, '/') !== false)
-			$url = explode('/', $url)[0];
-
-		if (in_array($url, PRIVATE_URI_ARRAY))
-		{
-			$db = Database::getInstance();
-			if (isset($_SESSION['token']))
-			{
-				if ($db->verifyConnectionToken($_SESSION['token']))
-				{
-					return $next($request, $response);
-				} else
-				{
-					unset($_SESSION['token']);
-				}
-			}
-			$_SESSION['url'] = $request->getUri()->getPath();
-
-			$code = 403;
-		} else
-		{
-			# TODO: Voir pour changer par une page not found générique intégrée au site
-			if (in_array($url, PUBLIC_URI_ARRAY))
+		foreach (ACCESSIBLE_PAGES[$right] as $value) {
+			if ($value[0] == $url)
 				return $next($request, $response);
-			else
-				$path = $request->getUri()->getBasePath();
 		}
-		$response = $response->withRedirect($path, $code);
 	}
-	return $response;
+	else {
+
+	}
+	return $response->withRedirect($path, $code);
 }
 
 
@@ -140,12 +141,10 @@ $app = new App([
 ]);
 
 // Liaison avec le Middleware
-/*$app->add(function($request, $response, $next) {
-	#var_dump(array($request, $response, $next));
-	var_dump(verifyURIAccessibility($request, $response, $next));
-	var_dump(text());
-	#return $response;
-});*/
+$app->add(function($request, $response, $next) {
+	$res = verifyURIAccessibility($request, $response, $next);
+	return $response;
+});
 
 /*
 Exemple générique de traitement d'une page

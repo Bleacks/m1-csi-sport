@@ -1,0 +1,25 @@
+/**
+ * @Author: Maxime Dolet <bleacks>
+ * @Date:   2018-01-16T21:10:23+01:00
+ * @Email:  maximed.contact@gmail.com
+ * @Last modified by:   bleacks
+ * @Last modified time: 2018-01-16T21:10:30+01:00
+ */
+
+ /*
+ CSS File that comes in addition of Materialize
+ */
+
+ /* Used to keep footer at bottom of the page */
+ body {
+ 	display: flex;
+ 	min-height: 100vh;
+ 	flex-direction: column;
+ }
+
+ main {
+ 	/* Used to keep footer at bottom of the page */
+ 	flex: 1 0 auto;
+ 	/* Notification slide down without pushing content */
+ 	margin: 60px;
+ }

@@ -3,7 +3,7 @@
 # @Date:   2018-01-03T22:44:53+01:00
 # @Email:  maximed.contact@gmail.com
 # @Last modified by:   bleacks
-# @Last modified time: 2018-01-16T16:25:12+01:00
+# @Last modified time: 2018-01-16T21:14:26+01:00
 
 Namespace Sources\Views;
 
@@ -34,9 +34,9 @@ class Subscribe extends View
 		# TODO: Ajouter la possiblité de fournir des options supplémentaires
 		$formContent = parent::inputField($this->id, 'text', 'first', 'Prénom', 'Maxime');
 		$formContent .= parent::inputField($this->id, 'text', 'last', 'Nom', 'Dolet');
-		$formContent .= parent::inputField($this->id, 'date', 'birth', 'Date de naissance', '1995-09-14');
+		$formContent .= parent::inputField($this->id, 'text', 'birth', 'Date de naissance', '1995-09-14');
 		$formContent .= parent::inputField($this->id, 'tel', 'phone', 'Téléphone', '1234567890');
-		$formContent .= parent::inputField($this->id, 'mail', 'mail', 'Email', 'maxime.dolet8@etu.univ-lorraine.fr');
+		$formContent .= parent::inputField($this->id, 'text', 'mail', 'Email', 'maxime.dolet8@etu.univ-lorraine.fr');
 		$formContent .= parent::inputField($this->id, 'password', 'pass', 'Mot de passe', 'max1409');
 
 		$content = parent::form('subscribe', $formContent, 'post');
@@ -52,7 +52,7 @@ class Subscribe extends View
 	public function postContent()
 	{
 		$content = '
-		<h1>Inscription effectuée avec succès</h1>
+		<h3>Inscription effectuée avec succès</h3>
 		<p>Vous pouvez à présent vous connecter et payer vos frais d\'inscription</p>';
 		return $content;
 	}
@@ -65,7 +65,7 @@ class Subscribe extends View
 	public function errorContent()
 	{
 		$content = '
-		<h1>Problème lors de l\'inscription</h1>
+		<h3>Problème lors de l\'inscription</h3>
 		<p>Votre adresse mail est déjà utilisée</p>';
 		return $content;
 	}
