@@ -469,29 +469,26 @@ $$ language plpgsql;
 
 /* Fonction admin / personnel accueil: permet d'ajouter une séance, avec un coach ou non.*/
 
-CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date, heure date, necessiteres bool) RETURNS 
+CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date) RETURNS 
 
 boolean SECURITY DEFINER AS $$
 
 DECLARE
-
     idEmp int;
-
     idCoach int;
-
-    
-
 BEGIN
 
 	select emp_id, coach_id into idEmp, idCoach from coach where iduserenregistre = idUsr;
-
-	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,heure,necessiteres,DEFAULT);
-
+	if nbinscmax != -1 OR idUsr is not null THEN
+    	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,True);/* C'est une séance nécessitant réservation*/
+	Else
+    	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,False);
+	End if;
     Return TRUE;
 
 END;
 
-$$ language plpgsql;
+
 
 
 
