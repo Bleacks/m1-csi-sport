@@ -624,8 +624,7 @@ idCartePrelevee int;
 idAchetev int;
 nbSeanceRestantev int;
 coutSeance int;
-nbInscMaxv int;
-coachPresent int;
+necessiteReservation bool;
 BEGIN
 
 	/* Vérification qu'on peut bien s'inscrire à cette séance:
@@ -637,10 +636,10 @@ BEGIN
     	Return false;
     END IF;
     
-    select nbinscmax, coach_id into nbInscMaxv, coachPresent 
+    select necessiteRes into necessiteReservation 
     from seance 
     where id_seance = idSeance;
-    IF nbInscMaxv != -1 /*Séance à capacité limité*/ OR coachPresent is not Null /*Séance coachée*/THEN
+    IF necessiteReservation = TRUE THEN
     	Return False;
     End if;
     
@@ -715,7 +714,14 @@ coutSeance int;
 nbinscmaxv int;
 nbinscactuelv int;
 coachPresent int;
+necessiteReservation bool;
 BEGIN
+	/* Vérif qu'il faut bien réserver */
+    select necessiteres into necessiteReservation from seance where id_seance = idSeance;
+    If necessiteReservation = FALSE THEN
+    	Return false;
+    End if;
+	
 	/* Vérif assez de place */
 	select nbinscmax, nbinscactuel into nbInscMaxv,nbinscactuelv 
     from seance 
