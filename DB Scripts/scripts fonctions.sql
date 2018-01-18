@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 /**
  * @Author: Maxime Dolet <bleacks>
  * @Date:   2018-01-16T22:50:43+01:00
  * @Email:  maximed.contact@gmail.com
  * @Last modified by:   bleacks
- * @Last modified time: 2018-01-16T23:48:00+01:00
+ * @Last modified time: 2018-01-18T16:18:01+01:00
  */
+
+/* Instruction pour �viter que tous les r�les puissent ex�cuter toutes les fonctions*/
+ALTER default privileges revoke execute on functions from public; 
 
 /* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user
 
@@ -475,35 +479,50 @@ $$ language plpgsql;
 
 
 
+<<<<<<< HEAD
 /* Fonction admin / personnel accueil: permet d'ajouter une s�ance, avec un coach ou non.*/
 
 CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date, heure date, necessiteres bool) RETURNS
+=======
+/* Fonction admin / personnel accueil: permet d'ajouter une s�ance, avec un coach ou non.
+idUsr d�signe l'idUtilisateur du d*/
+
+CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date) RETURNS
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 
 boolean SECURITY DEFINER AS $$
 
 DECLARE
-
     idEmp int;
-
     idCoach int;
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 BEGIN
 
 	select emp_id, coach_id into idEmp, idCoach from coach where iduserenregistre = idUsr;
-
-	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,heure,necessiteres,DEFAULT);
-
+	if nbinscmax != -1 OR idUsr is not null THEN
+    	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,True);/* C'est une s�ance n�cessitant r�servation*/
+	Else
+    	insert into seance values (Default,idUsr,idEmp,idCoach,idsalle,description,typeactivite,nbinscmax,0,estcollective,jour,False);
+	End if;
     Return TRUE;
 
 END;
-
 $$ language plpgsql;
 
 
 
+<<<<<<< HEAD
 /* Passe le statut d'une s�ance en inactif */
+=======
+
+
+/* Passe le statut d'une s�ance en inactif */
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 
 CREATE OR REPLACE FUNCTION supprimer_seance(idSeance int) RETURNS
 
@@ -532,8 +551,6 @@ BEGIN
 END;
 
 $$ language plpgsql;
-
-select * from seance;
 
 
 
@@ -635,9 +652,9 @@ idCartePrelevee int;
 idAchetev int;
 nbSeanceRestantev int;
 coutSeance int;
-nbInscMaxv int;
-coachPresent int;
+necessiteReservation bool;
 BEGIN
+<<<<<<< HEAD
 
 	/* V�rification qu'on peut bien s'inscrire � cette s�ance:
     Rappel sujet:  Une partie des activit�s n�cessite une r�servation, dont celles avec un
@@ -652,6 +669,13 @@ BEGIN
     from seance
     where id_seance = idSeance;
     IF nbInscMaxv != -1 /*S�ance � capacit� limit�*/ OR coachPresent is not Null /*S�ance coach�e*/THEN
+=======
+
+    select necessiteRes into necessiteReservation
+    from seance
+    where id_seance = idSeance;
+    IF necessiteReservation = TRUE THEN
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
     	Return False;
     End if;
 
@@ -685,10 +709,17 @@ BEGIN
     where nbseancerestante >= coutSeance
     And iduserenregistre = idUsr
     order by nbseancerestante asc;
+<<<<<<< HEAD
 
     If idCartePreleve is not Null THEN
     	Update achete
         Set nbseancerestante = nbSeanceRestantev - coutSeance /* Pour une inscription simple qui ne coute qu'une s�ance */
+=======
+
+    If idachetev is not Null THEN
+    	Update achete_une
+        Set nbseancerestante = nbSeanceRestantev - coutSeance /* Pour une inscription simple qui ne coute qu'une s�ance */
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
         Where idachete = idAchetev;
         RETURN TRUE;
     ELSE
@@ -708,11 +739,17 @@ BEGIN
 	select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
 	insert into s_inscrit values (idSeance,idUsr,idAdherent,demandeCoach);
 	update seance set nbinscactuel = nbinscactuel + 1 where id_seance = idSeance;
+	Return True;
 END;
 $$ language plpgsql;
 
+<<<<<<< HEAD
 /* Fonction pour VERIFIER UNIQUEMENT si on peut r�server pour un adh�rent � une s�ance
 Dispo pour: Adh�rent / Personnel Accueil */
+=======
+/* Fonction pour verifier si on peut r�server pour un adh�rent � une s�ance
+Dispo pour: Adh�rent / Personnel Accueil */
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 CREATE OR REPLACE FUNCTION verif_reservation_seance(idUsr int, idSeance int, paiementSurPlace bool) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 occurenceSeance int;
@@ -726,10 +763,23 @@ coutSeance int;
 nbinscmaxv int;
 nbinscactuelv int;
 coachPresent int;
+necessiteReservation bool;
 BEGIN
+<<<<<<< HEAD
 	/* V�rif assez de place */
 	select nbinscmax, nbinscactuel into nbInscMaxv,nbinscactuelv
     from seance
+=======
+	/* V�rif qu'il faut bien r�server */
+    select necessiteres into necessiteReservation from seance where id_seance = idSeance;
+    If necessiteReservation = FALSE THEN
+    	Return false;
+    End if;
+
+	/* V�rif assez de place */
+	select nbinscmax, nbinscactuel into nbInscMaxv,nbinscactuelv
+    from seance
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
     where id_seance = idSeance;
     IF nbinscmaxv < nbinscactuelv + 1 THEN
     	Return False; /* Plus de place: on annule */
@@ -760,8 +810,13 @@ BEGIN
     order by nbseancerestante asc;
 
     If idCartePreleve is not Null THEN
+<<<<<<< HEAD
     	Update achete
         Set nbseancerestante = nbSeanceRestantev - 1 /* Pour une inscription simple qui ne coute qu'une s�ance */
+=======
+    	Update achete_une
+        Set nbseancerestante = nbSeanceRestantev - 1 /* Pour une inscription simple qui ne coute qu'une s�ance */
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
         Where idachete = idAchetev;
         RETURN TRUE;
     ELSE
@@ -771,18 +826,22 @@ BEGIN
 END;
 $$ language plpgsql;
 
+<<<<<<< HEAD
 /* Note l'insertion de la demande de r�servation dans la base. */
+=======
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 CREATE OR REPLACE FUNCTION effectue_reservation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 idAdherent int;
 BEGIN
 	select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
-	insert into reserve values (idSeance,idUsr,idAdherent,null,current_date,DEFAULT,idUsrParrain); /* id reserve ne nous sert pas */
-	update seance set nbinscactuel = nbinsctactuel + 1 where id_seance = idSeance;
+	insert into reserve values (idSeance,idUsr,idAdherent,current_date,DEFAULT,idUsrParrain); /* id reserve ne nous sert pas */
+	update seance set nbinscactuel = nbinscactuel + 1 where id_seance = idSeance;
 END;
 $$ language plpgsql;
 
 
+<<<<<<< HEAD
 /* Note l'insertion de la demande de r�servation dans la base. */
 CREATE OR REPLACE FUNCTION accepte_invitation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
@@ -801,6 +860,11 @@ $$ language plpgsql;
 
 /* Annule une s�ance � venir: N'est possible que si la s�ance n'est pas encore pass�e.
 D�clenche un envoi de mail � tous les inscrits / r�serv�s � cette s�ance + le coach*/
+=======
+/* Annule une s�ance � venir: N'est possible que si la s�ance n'est pas encore pass�e.
+D�clenche un envoi de mail � tous les inscrits / r�serv�s � cette s�ance + le coach
+Non fonctionnelle*/
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54
 
 CREATE OR REPLACE FUNCTION annule_seance(idSeance int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
@@ -833,3 +897,8 @@ BEGIN
 
 END;
 $$ language plpgsql;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0f1962d71df62c62557d5cdee05fa60c1f090f54

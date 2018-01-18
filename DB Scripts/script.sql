@@ -1,6 +1,7 @@
 /*==============================================================*/
 /* Nom de SGBD :  PostgreSQL 8                                  */
-/* Date de création :  04/01/2018 14:55:23                      */
+/* Date de création :  04/01/2018 14:55:23  
+test modif bidon                    */
 /*==============================================================*/
 
 
@@ -291,6 +292,7 @@ create table HISTORIQUESEANCE (
    TYPEACTIVITE         TEXT                 null,
    DATESEANCE           DATE                 null,
    COACHDEMANDE         BOOL                 null,
+   ID_SEANCE int not null,
    constraint PK_HISTORIQUESEANCE primary key (IDHISTOSEANCE)
 );
 
