@@ -13,10 +13,14 @@ Create role salle_partenaire;
 
 Grant droits_de_base to inscrit_adherent;
 Grant droits_de_base to inscrit_non_adherent;
-Grant droits_de_base to administrateur;
+/*Grant droits_de_base to administrateur; pas nécessaire car il a déjà les SUD de par son rôle d'admin*/
 Grant droits_de_base to personnel_accueil;
 Grant droits_de_base to coach;
 Grant droits_de_base to salle_partenaire;
+
+GRANT DELETE ON ALL TABLES IN SCHEMA public TO administrateur;
+GRANT DELETE ON ALL TABLES IN SCHEMA public TO administrateur;
+GRANT UPDATE ON ALL TABLES IN SCHEMA public TO administrateur;
 
 Alter role inscrit_adherent CONNECTION LIMIT 100 PASSWORD 'a';
 Grant execute on function accepte_invitation_seance(idUsr int, idSeance int, idUsrParrain int) to inscrit_adherent;
