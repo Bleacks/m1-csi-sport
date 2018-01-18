@@ -629,15 +629,6 @@ nbSeanceRestantev int;
 coutSeance int;
 necessiteReservation bool;
 BEGIN
-
-	/* Vérification qu'on peut bien s'inscrire à cette séance:
-    Rappel sujet:  Une partie des activités nécessite une réservation, dont celles avec un
-	coach et celles à capacité/effectif limité.
-    Dans le cas d'une inscription on à le droit de s'inscrire qu'aux séances sans coach / capacité limitée */
-	select count(*) into occurenceSeance from seance where id_seance = idSeance;
-    if occurenceSeance != 1 THEN
-    	Return false;
-    END IF;
     
     select necessiteRes into necessiteReservation 
     from seance 
@@ -703,7 +694,7 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Fonction pour VERIFIER UNIQUEMENT si on peut réserver pour un adhérent à une séance
+/* Fonction pour verifier si on peut réserver pour un adhérent à une séance
 Dispo pour: Adhérent / Personnel Accueil */	
 CREATE OR REPLACE FUNCTION verif_reservation_seance(idUsr int, idSeance int, paiementSurPlace bool) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
@@ -770,36 +761,20 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Note l'insertion de la demande de réservation dans la base. */
 CREATE OR REPLACE FUNCTION effectue_reservation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 idAdherent int;
 BEGIN
 	select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
-	insert into reserve values (idSeance,idUsr,idAdherent,null,current_date,DEFAULT,idUsrParrain); /* id reserve ne nous sert pas */
-	update seance set nbinscactuel = nbinsctactuel + 1 where id_seance = idSeance;
+	insert into reserve values (idSeance,idUsr,idAdherent,current_date,DEFAULT,idUsrParrain); /* id reserve ne nous sert pas */
+	update seance set nbinscactuel = nbinscactuel + 1 where id_seance = idSeance;
 END;
 $$ language plpgsql;
 
-
-/* Note l'insertion de la demande de réservation dans la base. */
-CREATE OR REPLACE FUNCTION accepte_invitation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
-DECLARE
-idAdherent int;
-peutSinscrire bool;
-BEGIN
-    select verif_reservation_seance(idUsr, idSeance, FALSE) into peutSinscrire;
-    if peutSinscrire = TRUE Then
-		select effectue_reservation_seance(idUsr, idSeance, idUsrParrain);
-		Return true;
-    Else
-    	return False;
-    End if;
-END;
-$$ language plpgsql;
 
 /* Annule une séance à venir: N'est possible que si la séance n'est pas encore passée. 
-Déclenche un envoi de mail à tous les inscrits / réservés à cette séance + le coach*/
+Déclenche un envoi de mail à tous les inscrits / réservés à cette séance + le coach
+Non fonctionnelle*/
 
 CREATE OR REPLACE FUNCTION annule_seance(idSeance int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
