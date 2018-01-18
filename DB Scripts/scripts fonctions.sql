@@ -470,7 +470,8 @@ $$ language plpgsql;
 
 
 
-/* Fonction admin / personnel accueil: permet d'ajouter une séance, avec un coach ou non.*/
+/* Fonction admin / personnel accueil: permet d'ajouter une séance, avec un coach ou non.
+idUsr désigne l'idUtilisateur du d*/
 
 CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date) RETURNS 
 
@@ -490,6 +491,7 @@ BEGIN
     Return TRUE;
 
 END;
+$$ language plpgsql;
 
 
 
@@ -524,8 +526,6 @@ BEGIN
 END;
 
 $$ language plpgsql;
-
-select * from seance;
 
 
 
