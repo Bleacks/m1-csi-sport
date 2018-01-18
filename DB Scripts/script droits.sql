@@ -45,6 +45,11 @@ Grant execute on function verif_reservation_seance(idUsr int, idSeance int, paie
 
 /* Fonctions coach */
 Grant execute on function consulter_son_planning(idUsr int) to coach;
+Grant execute on function accepter_coacher(idUsr int, idSeance int) to coach;
+
+/* Fonctions pour les visiteurs */
+grant execute on function auth(mailP varchar, mdpP varchar) to public;
+grant execute on function inscription_adherent(nom varchar, prenom varchar, ddn date, tel varchar, mailP varchar, mdp varchar) to public;
 
 /* Création de rôles pour le test */
 Create role coach_1 with password 'a' connection limit 1;
