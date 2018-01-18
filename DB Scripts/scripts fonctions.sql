@@ -1,12 +1,9 @@
 /* Instruction pour éviter que tous les rôles puissent exécuter toutes les fonctions*/
 ALTER default privileges revoke execute on functions from public; 
 
-/* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user 
+/* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user
+est un adh?rent */
 
-est un adhérent */
-
-
-drop function auth(character varying,character varying);
 
 CREATE OR REPLACE FUNCTION auth(mailP varchar, mdpP varchar) RETURNS varchar SECURITY DEFINER AS $$
 
@@ -26,23 +23,23 @@ stringRes varchar;
 
 BEGIN
 
-    select mdp, iduserenregistre, en_activite into mdpTmp, idRes, activite 
+    select mdp, iduserenregistre, en_activite into mdpTmp, idRes, activite
 
-    from utilisateurenregistre 
+    from utilisateurenregistre
 
 	where mailP = mail;
 
-    
+
 
     IF mdpTmp = mdpP AND activite = True THEN
 
-    	raise notice'Je cherche une occurence pr %',idRes; 
+    	raise notice'Je cherche une occurence pr %',idRes;
 
         select count(*) into nbOccurence from adherent where iduserenregistre = idRes and date_paiement is not null;
 
         IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';adherent';
+        	stringRes = idRes || ';User';
 
         	return stringRes;
 
@@ -52,7 +49,7 @@ BEGIN
 
 		 IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';utilisateurnonadherent';
+        	stringRes = idRes || ';Unpayed';
 
             return stringRes;
 
@@ -62,7 +59,7 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';administrateur';
+        	stringRes = idRes || ';Admin';
 
             return stringRes;
 
@@ -72,7 +69,7 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';coach';
+        	stringRes = idRes || ';Coach';
 
             return stringRes;
 
@@ -82,23 +79,24 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';personnelaccueil';
+        	stringRes = idRes || ';Employee';
 
             return stringRes;
 
         END IF;
 
-        stringRes = idRes || 'Introuvable';
+        stringRes = idRes || 'Visitor';
 
     	Return stringRes;
 
     END IF;
 
-    Return 'couple mail / mdp introuvable';
+    Return False;
 
 END;
 
 $$ language plpgsql;
+
 
 
 

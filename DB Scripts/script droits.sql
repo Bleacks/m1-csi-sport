@@ -32,7 +32,7 @@ Grant execute on function verif_inscription_seance(idUsr int, idSeance int, dema
 Grant execute on function verif_reservation_seance(idUsr int, idSeance int, paiementSurPlace bool) to inscrit_adherent;
 
 Alter role inscrit_non_adherent CONNECTION LIMIT 100 PASSWORD 'a';
-Grant execute on function paiement_adherent(idUsr int) to inscrit_non_adherent
+Grant execute on function paiement_adherent(idUsr int) to inscrit_non_adherent;
 
 /* Fonctions admin */
 Grant execute on function ajouter_compte_coach(nom varchar, prenom varchar, ddn date, num varchar, mailP varchar, mdp varchar, rib varchar, numss varchar, specialite varchar) to administrateur;
