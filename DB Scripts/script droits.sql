@@ -42,6 +42,11 @@ Grant execute on function effectue_inscription_seance(idUsr int, idSeance int, d
 Grant execute on function effectue_reservation_seance(idUsr int, idSeance int, idUsrParrain int) to personnel_accueil;
 Grant execute on function verif_inscription_seance(idUsr int, idSeance int, demandeCoach bool, paiementSurPlace bool) to personnel_accueil;
 Grant execute on function verif_reservation_seance(idUsr int, idSeance int, paiementSurPlace bool) to personnel_accueil;
+Grant execute on function achat_abonnement(idUsr int, idAboAchat int) to personnel_accueil;
+Grant execute on function achat_carte(idUsr int, idCarteAchat int) to personnel_accueil;
+Grant execute on function paiement_adherent(idUsr int) to personnel_accueil;
+grant execute on function inscription_adherent(nom varchar, prenom varchar, ddn date, tel varchar, mailP varchar, mdp varchar) to personnel_accueil;
+
 
 /* Fonctions coach */
 Grant execute on function consulter_son_planning(idUsr int) to coach;
