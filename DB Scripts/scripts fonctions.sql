@@ -699,6 +699,7 @@ BEGIN
 	select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
 	insert into s_inscrit values (idSeance,idUsr,idAdherent,demandeCoach);
 	update seance set nbinscactuel = nbinscactuel + 1 where id_seance = idSeance;
+	Return True;
 END;
 $$ language plpgsql;
 
