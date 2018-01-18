@@ -677,8 +677,8 @@ BEGIN
     And iduserenregistre = idUsr
     order by nbseancerestante asc;
     
-    If idCartePreleve is not Null THEN
-    	Update achete 
+    If idachetev is not Null THEN
+    	Update achete_une
         Set nbseancerestante = nbSeanceRestantev - coutSeance /* Pour une inscription simple qui ne coute qu'une séance */ 
         Where idachete = idAchetev;
         RETURN TRUE;
@@ -758,7 +758,7 @@ BEGIN
     order by nbseancerestante asc;
     
     If idCartePreleve is not Null THEN
-    	Update achete 
+    	Update achete_une
         Set nbseancerestante = nbSeanceRestantev - 1 /* Pour une inscription simple qui ne coute qu'une séance */ 
         Where idachete = idAchetev;
         RETURN TRUE;
