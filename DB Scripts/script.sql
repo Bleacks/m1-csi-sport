@@ -292,6 +292,7 @@ create table HISTORIQUESEANCE (
    TYPEACTIVITE         TEXT                 null,
    DATESEANCE           DATE                 null,
    COACHDEMANDE         BOOL                 null,
+   ID_SEANCE int not null,
    constraint PK_HISTORIQUESEANCE primary key (IDHISTOSEANCE)
 );
 
