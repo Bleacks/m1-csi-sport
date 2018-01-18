@@ -1,5 +1,5 @@
 /* Relance pour les personnes dont l'abonnement mensuel va arriver à expiration demain
-Lancée chaque jour (non testée)*/
+Lancée chaque jour */
 Create or replace function relance_mensuelle_abo() returns trigger as $$
 DECLARE
 temprow s_abonne%ROWTYPE;
