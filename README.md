@@ -94,17 +94,16 @@ platformio-ide-terminal
 
 #### Installation de la base de donnée
 
-Pour utiliser la base de donnée en local:
-Executer dans l'ordre les fichiers script.sql, script fonctions.sql, 
-script triggers.sql, script droits.sql
-Ceci créera les rôles suivant dans la base à partir du quel il 
-est possible de se connecter:
+- Pour utiliser la base de donnée en local:
+- Executer dans l'ordre les fichiers script.sql, script fonctions.sql, script triggers.sql, script droits.sql
+- Ceci créera les rôles suivant dans la base à partir du quel il est possible de se connecter:
+```
 inscrit_adherent
 inscrit__non_adherent
 coach_1
 admin_1
 personnel_accueil_1
-
+```
 Tous ces rôles ont pour mot de passe 'a'
 
 ## Informations supplémentaires
