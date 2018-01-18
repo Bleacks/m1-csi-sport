@@ -1,4 +1,4 @@
-/* Instruction pour éviter que tous les rôles puissent exécuter toutes les fonctions */
+/* Instruction pour éviter que tous les rôles puissent exécuter toutes les fonctions*/
 ALTER default privileges revoke execute on functions from public; 
 
 /* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user 
