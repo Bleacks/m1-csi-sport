@@ -1,6 +1,14 @@
-/* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user 
+/**
+ * @Author: Maxime Dolet <bleacks>
+ * @Date:   2018-01-16T22:50:43+01:00
+ * @Email:  maximed.contact@gmail.com
+ * @Last modified by:   bleacks
+ * @Last modified time: 2018-01-16T23:48:00+01:00
+ */
 
-est un adhérent */
+/* Renvoie un string sous la forme 'idUser;roleUser' exemple : auth('moi@mail.com','mdp') renverra 1;adherent si cet user
+
+est un adhï¿½rent */
 
 
 drop function auth(character varying,character varying);
@@ -23,23 +31,23 @@ stringRes varchar;
 
 BEGIN
 
-    select mdp, iduserenregistre, en_activite into mdpTmp, idRes, activite 
+    select mdp, iduserenregistre, en_activite into mdpTmp, idRes, activite
 
-    from utilisateurenregistre 
+    from utilisateurenregistre
 
 	where mailP = mail;
 
-    
+
 
     IF mdpTmp = mdpP AND activite = True THEN
 
-    	raise notice'Je cherche une occurence pr %',idRes; 
+    	raise notice'Je cherche une occurence pr %',idRes;
 
         select count(*) into nbOccurence from adherent where iduserenregistre = idRes and date_paiement is not null;
 
         IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';adherent';
+        	stringRes = idRes || ';User';
 
         	return stringRes;
 
@@ -49,7 +57,7 @@ BEGIN
 
 		 IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';utilisateurnonadherent';
+        	stringRes = idRes || ';Unpayed';
 
             return stringRes;
 
@@ -59,7 +67,7 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';administrateur';
+        	stringRes = idRes || ';Admin';
 
             return stringRes;
 
@@ -69,7 +77,7 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';coach';
+        	stringRes = idRes || ';Coach';
 
             return stringRes;
 
@@ -79,19 +87,19 @@ BEGIN
 
          IF nbOccurence = 1 THEN
 
-        	stringRes = idRes || ';personnelaccueil';
+        	stringRes = idRes || ';Employee';
 
             return stringRes;
 
         END IF;
 
-        stringRes = idRes || 'Introuvable';
+        stringRes = idRes || 'Visitor';
 
     	Return stringRes;
 
     END IF;
 
-    Return 'couple mail / mdp introuvable';
+    Return False;
 
 END;
 
@@ -117,7 +125,7 @@ idGenere int;
 
 BEGIN
 
-/* Vérificiation pour que le mail soit unique */
+/* Vï¿½rificiation pour que le mail soit unique */
 
 	select count(*) into occurenceMail from utilisateurenregistre where mailP = mail;
 
@@ -155,9 +163,9 @@ datePaiement date;
 
 BEGIN
 
-select count(*) into nbOccurenceUser from adherent where idUsr = iduserenregistre; /*Vérification que l'utilisatuer est bien dans adhérent**/
+select count(*) into nbOccurenceUser from adherent where idUsr = iduserenregistre; /*Vï¿½rification que l'utilisatuer est bien dans adhï¿½rent**/
 
-select date_paiement into datePaiement from adherent where idUsr = iduserenregistre; /* Vérificaiton qu'il n'a pas déjà payé*/
+select date_paiement into datePaiement from adherent where idUsr = iduserenregistre; /* Vï¿½rificaiton qu'il n'a pas dï¿½jï¿½ payï¿½*/
 
 
 
@@ -179,11 +187,11 @@ $$ language plpgsql;
 
 
 
-/* Achat abonnement 
+/* Achat abonnement
 
  Achat abonne: renvoie true si abonnement possible, false sinon
 
-Si un abonnement est déjà en cours, on refuse l'abonnement demandé*/
+Si un abonnement est dï¿½jï¿½ en cours, on refuse l'abonnement demandï¿½*/
 
 CREATE OR REPLACE FUNCTION achat_abonnement(idUsr int, idAboAchat int) RETURNS boolean SECURITY DEFINER AS $$
 
@@ -201,9 +209,9 @@ DECLARE
 
 BEGIN
 
-select id_adherent into idAdherent from adherent where idUsr = iduserenregistre; 
+select id_adherent into idAdherent from adherent where idUsr = iduserenregistre;
 
-FOR r IN 
+FOR r IN
 
 		SELECT idabonnement, date_debut FROM s_abonne WHERE idAdherent = id_adherent
 
@@ -211,7 +219,7 @@ FOR r IN
 
         Select duree into dureeTmp
 
-        from abonnement 
+        from abonnement
 
         where abonnement.idabonnement = idabonnement;
 
@@ -237,7 +245,7 @@ END;
 
 $$ language plpgsql;
 
-/* Achat carte: Insère simplement une ligne qui indique que l'utilisatuer à acheté une carte 
+/* Achat carte: Insï¿½re simplement une ligne qui indique que l'utilisatuer ï¿½ achetï¿½ une carte
 
 */
 
@@ -255,13 +263,13 @@ BEGIN
 
 select nbseance into nbSeances from carte where idcarte = idCarteAchat;
 
-select id_adherent into idAdherent from adherent where idUsr = iduserenregistre; 
+select id_adherent into idAdherent from adherent where idUsr = iduserenregistre;
 
 insert into achete_une values (idCarteAchat, idUsr, idAdherent,DEFAULT,nbSeances);
 
 
 
-Return true; 
+Return true;
 
 
 
@@ -275,7 +283,7 @@ $$ language plpgsql;
 
 /* Fonction pour coach uniquement */
 
-CREATE OR REPLACE FUNCTION consulter_son_planning(idUsr int) RETURNS 
+CREATE OR REPLACE FUNCTION consulter_son_planning(idUsr int) RETURNS
 
 table (
 
@@ -303,11 +311,11 @@ BEGIN
 
     raise notice 'id coach: %',idCoach;
 
-	Return query 
+	Return query
 
     	SELECT seance.typeactivite, salle.adresse, seance.nbinscactuel, seance.jour, seance.heure
 
-        from seance 
+        from seance
 
         	join coach on seance.coach_id = coach.coach_id
 
@@ -319,7 +327,7 @@ BEGIN
 
 		And en_activite = True;
 
-    
+
 
 END;
 
@@ -329,7 +337,7 @@ $$ language plpgsql;
 
 /*Fonction pour coach uniquement*/
 
-CREATE OR REPLACE FUNCTION accepter_coacher(idUsr int, idSeance int) RETURNS 
+CREATE OR REPLACE FUNCTION accepter_coacher(idUsr int, idSeance int) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -345,13 +353,13 @@ BEGIN
 
 
 
-	Select emp_id, coach_id into idEmp, idCoach 
+	Select emp_id, coach_id into idEmp, idCoach
 
-    from coach 
+    from coach
 
     where iduserenregistre = idusr;
 
-    
+
 
     Select coach_id into idCoachActuel
 
@@ -359,7 +367,7 @@ BEGIN
 
     where id_seance = idSeance;
 
-    
+
 
     IF idCoachActuel is null THEN
 
@@ -375,7 +383,7 @@ BEGIN
 
     END IF;
 
-    
+
 
 END;
 
@@ -383,9 +391,9 @@ $$ language plpgsql;
 
 
 
-/* crée un compte coach */
+/* crï¿½e un compte coach */
 
-CREATE OR REPLACE FUNCTION ajouter_compte_coach(nom varchar, prenom varchar, ddn date, num varchar, mailP varchar, mdp varchar, rib varchar, numss varchar, specialite varchar) RETURNS 
+CREATE OR REPLACE FUNCTION ajouter_compte_coach(nom varchar, prenom varchar, ddn date, num varchar, mailP varchar, mdp varchar, rib varchar, numss varchar, specialite varchar) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -425,9 +433,9 @@ $$ language plpgsql;
 
 
 
-/* crée un compte coach */
+/* crï¿½e un compte coach */
 
-CREATE OR REPLACE FUNCTION ajouter_compte_personnelaccueil(nom varchar, prenom varchar, ddn date, num varchar, mailP varchar, mdp varchar, rib varchar, numss varchar) RETURNS 
+CREATE OR REPLACE FUNCTION ajouter_compte_personnelaccueil(nom varchar, prenom varchar, ddn date, num varchar, mailP varchar, mdp varchar, rib varchar, numss varchar) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -467,9 +475,9 @@ $$ language plpgsql;
 
 
 
-/* Fonction admin / personnel accueil: permet d'ajouter une séance, avec un coach ou non.*/
+/* Fonction admin / personnel accueil: permet d'ajouter une sï¿½ance, avec un coach ou non.*/
 
-CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date, heure date, necessiteres bool) RETURNS 
+CREATE OR REPLACE FUNCTION ajouter_seance(idUsr int, idsalle int,description varchar, typeactivite varchar, nbinscmax int, estcollective bool, jour date, heure date, necessiteres bool) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -479,7 +487,7 @@ DECLARE
 
     idCoach int;
 
-    
+
 
 BEGIN
 
@@ -495,9 +503,9 @@ $$ language plpgsql;
 
 
 
-/* Passe le statut d'une séance en inactif */
+/* Passe le statut d'une sï¿½ance en inactif */
 
-CREATE OR REPLACE FUNCTION supprimer_seance(idSeance int) RETURNS 
+CREATE OR REPLACE FUNCTION supprimer_seance(idSeance int) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -531,7 +539,7 @@ select * from seance;
 
 /* Passe le statut d'un compte en inactif */
 
-CREATE OR REPLACE FUNCTION clore_compte_inactif(idUsr int) RETURNS 
+CREATE OR REPLACE FUNCTION clore_compte_inactif(idUsr int) RETURNS
 
 boolean SECURITY DEFINER AS $$
 
@@ -549,7 +557,7 @@ BEGIN
 
     select derniere_co into derniereActivite from adherent
 
-    join utilisateurenregistre 
+    join utilisateurenregistre
 
     	on utilisateurenregistre.iduserenregistre = adherent.iduserenregistre;
 
@@ -563,7 +571,7 @@ BEGIN
 
     end if;
 
-    
+
 
     if etatActuel = true AND delai1an = true then
 
@@ -583,9 +591,9 @@ $$ language plpgsql;
 
 
 
-/* Recherche les comptes pouvant être passés en inactif */
+/* Recherche les comptes pouvant ï¿½tre passï¿½s en inactif */
 
-CREATE OR REPLACE FUNCTION recherche_compte_inactif() RETURNS 
+CREATE OR REPLACE FUNCTION recherche_compte_inactif() RETURNS
 
 table (
 
@@ -615,8 +623,8 @@ END;
 
 $$ language plpgsql;
 
-/* Fonction pour VERIFIER UNIQUEMENT si on peut inscrire un adhérent à une séance
-Dispo pour: Adhérent / Personnel Accueil */	
+/* Fonction pour VERIFIER UNIQUEMENT si on peut inscrire un adhï¿½rent ï¿½ une sï¿½ance
+Dispo pour: Adhï¿½rent / Personnel Accueil */
 CREATE OR REPLACE FUNCTION verif_inscription_seance(idUsr int, idSeance int, demandeCoach bool, paiementSurPlace bool) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 occurenceSeance int;
@@ -631,56 +639,56 @@ nbInscMaxv int;
 coachPresent int;
 BEGIN
 
-	/* Vérification qu'on peut bien s'inscrire à cette séance:
-    Rappel sujet:  Une partie des activités nécessite une réservation, dont celles avec un
-	coach et celles à capacité/effectif limité.
-    Dans le cas d'une inscription on à le droit de s'inscrire qu'aux séances sans coach / capacité limitée */
+	/* Vï¿½rification qu'on peut bien s'inscrire ï¿½ cette sï¿½ance:
+    Rappel sujet:  Une partie des activitï¿½s nï¿½cessite une rï¿½servation, dont celles avec un
+	coach et celles ï¿½ capacitï¿½/effectif limitï¿½.
+    Dans le cas d'une inscription on ï¿½ le droit de s'inscrire qu'aux sï¿½ances sans coach / capacitï¿½ limitï¿½e */
 	select count(*) into occurenceSeance from seance where id_seance = idSeance;
     if occurenceSeance != 1 THEN
     	Return false;
     END IF;
-    
-    select nbinscmax, coach_id into nbInscMaxv, coachPresent 
-    from seance 
+
+    select nbinscmax, coach_id into nbInscMaxv, coachPresent
+    from seance
     where id_seance = idSeance;
-    IF nbInscMaxv != -1 /*Séance à capacité limité*/ OR coachPresent is not Null /*Séance coachée*/THEN
+    IF nbInscMaxv != -1 /*Sï¿½ance ï¿½ capacitï¿½ limitï¿½*/ OR coachPresent is not Null /*Sï¿½ance coachï¿½e*/THEN
     	Return False;
     End if;
-    
+
 	select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
-    
-    /* Vérification que l'adhérent paie sur place*/
-    
+
+    /* Vï¿½rification que l'adhï¿½rent paie sur place*/
+
     if paiementSurPlace = true then
     	return True;
     End if;
-    /* Vérification qu'on ai un abonnement en cours */
-    select date_debut, duree into dateDebut,dureeAbo 
-    from s_abonne 
+    /* Vï¿½rification qu'on ai un abonnement en cours */
+    select date_debut, duree into dateDebut,dureeAbo
+    from s_abonne
     	join abonnement on s_abonne.idabonnement = abonnement.idabonnement
     where idUsr = s_abonne.iduserenregistre
     Order by s_abonne.date_debut DESC;
-    
+
     /* L'utilisateur peut s'inscrire sans soucis */
     If (dateDebut + dureeAbo) >= current_date THEN
         return True;
     END IF;
-    
+
     if demandeCoach = true THEN
     	coutSeance = 2;
     else
     	coutSeance = 1;
     END IF;
-    
+
     select idachete, nbseancerestante into idAchetev, nbSeanceRestantev
     from achete_une
     where nbseancerestante >= coutSeance
     And iduserenregistre = idUsr
     order by nbseancerestante asc;
-    
+
     If idCartePreleve is not Null THEN
-    	Update achete 
-        Set nbseancerestante = nbSeanceRestantev - coutSeance /* Pour une inscription simple qui ne coute qu'une séance */ 
+    	Update achete
+        Set nbseancerestante = nbSeanceRestantev - coutSeance /* Pour une inscription simple qui ne coute qu'une sï¿½ance */
         Where idachete = idAchetev;
         RETURN TRUE;
     ELSE
@@ -690,8 +698,8 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Fonction pour INSCRIRE UNIQUEMENT si on peut inscrire un adhérent à une séance
-Dispo pour: Adhérent / Personnel Accueil */	
+/* Fonction pour INSCRIRE UNIQUEMENT si on peut inscrire un adhï¿½rent ï¿½ une sï¿½ance
+Dispo pour: Adhï¿½rent / Personnel Accueil */
 CREATE OR REPLACE FUNCTION effectue_inscription_seance(idUsr int, idSeance int, demandeCoach bool) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 idAdherent int;
@@ -703,8 +711,8 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Fonction pour VERIFIER UNIQUEMENT si on peut réserver pour un adhérent à une séance
-Dispo pour: Adhérent / Personnel Accueil */	
+/* Fonction pour VERIFIER UNIQUEMENT si on peut rï¿½server pour un adhï¿½rent ï¿½ une sï¿½ance
+Dispo pour: Adhï¿½rent / Personnel Accueil */
 CREATE OR REPLACE FUNCTION verif_reservation_seance(idUsr int, idSeance int, paiementSurPlace bool) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 occurenceSeance int;
@@ -719,41 +727,41 @@ nbinscmaxv int;
 nbinscactuelv int;
 coachPresent int;
 BEGIN
-	/* Vérif assez de place */
-	select nbinscmax, nbinscactuel into nbInscMaxv,nbinscactuelv 
-    from seance 
+	/* Vï¿½rif assez de place */
+	select nbinscmax, nbinscactuel into nbInscMaxv,nbinscactuelv
+    from seance
     where id_seance = idSeance;
     IF nbinscmaxv < nbinscactuelv + 1 THEN
     	Return False; /* Plus de place: on annule */
     End if;
-    
+
     select id_adherent into idAdherent from adherent where iduserenregistre = idUsr;
-    
-    /* Vérificiation qu'il est possible de s'inscrire à la dite séance */
+
+    /* Vï¿½rificiation qu'il est possible de s'inscrire ï¿½ la dite sï¿½ance */
     if paiementSurPlace = true THEN
     	return True;
     End if;
-    /* Vérification qu'on ai un abonnement en cours */
-    select date_debut, duree into dateDebut,dureeAbo 
-    from s_abonne 
+    /* Vï¿½rification qu'on ai un abonnement en cours */
+    select date_debut, duree into dateDebut,dureeAbo
+    from s_abonne
     	join abonnement on s_abonne.idabonnement = abonnement.idabonnement
     where idUsr = s_abonne.iduserenregistre
     Order by s_abonne.date_debut DESC;
-    
+
     /* L'utilisateur peut s'inscrire sans soucis */
     If (dateDebut + dureeAbo) >= current_date THEN
         return True;
     END IF;
-    
+
     select idachete, nbseancerestante into idAchetev, nbSeanceRestantev
     from achete_une
     where nbseancerestante >= 1
     And iduserenregistre = idUsr
     order by nbseancerestante asc;
-    
+
     If idCartePreleve is not Null THEN
-    	Update achete 
-        Set nbseancerestante = nbSeanceRestantev - 1 /* Pour une inscription simple qui ne coute qu'une séance */ 
+    	Update achete
+        Set nbseancerestante = nbSeanceRestantev - 1 /* Pour une inscription simple qui ne coute qu'une sï¿½ance */
         Where idachete = idAchetev;
         RETURN TRUE;
     ELSE
@@ -763,7 +771,7 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Note l'insertion de la demande de réservation dans la base. */
+/* Note l'insertion de la demande de rï¿½servation dans la base. */
 CREATE OR REPLACE FUNCTION effectue_reservation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 idAdherent int;
@@ -775,7 +783,7 @@ END;
 $$ language plpgsql;
 
 
-/* Note l'insertion de la demande de réservation dans la base. */
+/* Note l'insertion de la demande de rï¿½servation dans la base. */
 CREATE OR REPLACE FUNCTION accepte_invitation_seance(idUsr int, idSeance int, idUsrParrain int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
 idAdherent int;
@@ -791,8 +799,8 @@ BEGIN
 END;
 $$ language plpgsql;
 
-/* Annule une séance à venir: N'est possible que si la séance n'est pas encore passée. 
-Déclenche un envoi de mail à tous les inscrits / réservés à cette séance + le coach*/
+/* Annule une sï¿½ance ï¿½ venir: N'est possible que si la sï¿½ance n'est pas encore passï¿½e.
+Dï¿½clenche un envoi de mail ï¿½ tous les inscrits / rï¿½servï¿½s ï¿½ cette sï¿½ance + le coach*/
 
 CREATE OR REPLACE FUNCTION annule_seance(idSeance int) RETURNS boolean SECURITY DEFINER AS $$
 DECLARE
@@ -803,26 +811,25 @@ r record;
 BEGIN
     select jour, en_activite, nbInscMaxv into dateSeance, active, nbInscMaxv from seance where id_seance = idSeance;
     if active = True AND dateSeance > current_date THEN
-    	/* On regarde si on va devoir prévenir des adhérents dans inscrit ou réserve */
+    	/* On regarde si on va devoir prï¿½venir des adhï¿½rents dans inscrit ou rï¿½serve */
         If nbInscMaxv = -1 THEN/* On regarde la table s'inscrit */
-        	For R in 
+        	For R in
             	Select iduserenregistre from s_inscrit where id_seance = idSeance
                 LOOP
-                	raise notice 'Bonjour adhérent n°% la séance n°% du % est annulée',iduserenregistre, idSeance, dateSeance;
+                	raise notice 'Bonjour adhï¿½rent nï¿½% la sï¿½ance nï¿½% du % est annulï¿½e',iduserenregistre, idSeance, dateSeance;
                 END LOOP;
-        Else 
-        	For r in 
+        Else
+        	For r in
             	Select iduserenregistre from reserve where id_seance = idSeance
                 LOOP
-                	raise notice 'Bonjour adhérent n°% la séance n°% du % est annulée',iduserenregistre, idSeance, dateSeance;
+                	raise notice 'Bonjour adhï¿½rent nï¿½% la sï¿½ance nï¿½% du % est annulï¿½e',iduserenregistre, idSeance, dateSeance;
                 END LOOP;
         End if;
         update seance set en_activite = False where id_seance = idSeance;
         Return True;
     Else
     	return False;
-    End if;   
-    
+    End if;
+
 END;
 $$ language plpgsql;
-
